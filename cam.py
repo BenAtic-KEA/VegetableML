@@ -1,16 +1,9 @@
 import cv2
 import sys
 sys.version
-from fastai.imports import *
 from fastai.vision.all import *
-from fastai.data.all import *
-import fastbook
-fastbook.setup_book()
-from fastai.callback.preds import get_image_files
-from fastai.vision.all import CategoryBlock
-from duckduckgo_search import ddg_images
-from fastcore.all import *
-from fastdownload import download_url
+from fastai.vision import *
+from fastcore.basics import *
 
 learn = load_learner('vegetables_model.pkl',cpu=True)
 vid = cv2.VideoCapture(0)
@@ -22,7 +15,7 @@ while (True):
 
     if ret==True:
         
-        is_vege,_,probs = learn.predict(PILImage.create(frame))
+        is_vege,_,probs = learn.predict(Image(ret).create(frame))
     # If needed, convert the frame to grayscale
     # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
