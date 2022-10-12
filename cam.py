@@ -1,23 +1,30 @@
+from typing import final
 import cv2
-from fastai.vision import *
+from PIL import Image
+from fastai.vision.core import *
+from fastai.vision.widgets import *
 from fastai.vision.all import *
 from fastai.basics import *
+from fastai.data.external import *
+import torchvision.transforms as T
+from torchvision.transforms.functional import to_pil_image
 
-learn = load_learner('vegetables_model.pkl',cpu=True)
+learn = load_learner('vegetables_model1.pkl')
 vid = cv2.VideoCapture(0)
-
+transform = T.ToTensor()
 while (True):
     # Capture the video frame
     # by frame
     ret, frame = vid.read()
-
     
-        
-    t = torch.tensor(np.ascontiguousarray(np.flip(frame, 2)).transpose(2,0,1)).float()/255
-    img = Image(t) # fastai.vision.Image, not PIL.Image
-    p = learn.predict(img)
-# If needed, convert the frame to grayscale
-# gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    img_read = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    img_nump = np.asarray(img_read)
+    tensor_img = transform(img_read)
+    img = Image.fromarray((img_nump*255).astype(np.uint8))
+    print(img)
+    ##print(img_tensor)
+    #img_pil = Image.fromarray(img_read)
+    p,_,pred = learn.predict(TensorImageBase(img))
 
     cv2.putText(frame, f"{p}", (10,100),
             cv2.FONT_HERSHEY_SIMPLEX,
